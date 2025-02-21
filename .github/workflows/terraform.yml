@@ -47,4 +47,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: awaiting manual approval
-        run: echo "Waiting for manual approval before applying changes...":
+        run: echo "Waiting for manual approval before applying changes..."
