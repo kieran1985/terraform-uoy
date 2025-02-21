@@ -3,9 +3,10 @@ on:
   push:
     branches:
       - main
+      workflow_dispatch:
 
 jobs:
-  terraform:
+  terraform-init-plan:
     name: terraform install, init, plan
     runs-on: ubuntu-latest
     permissions:
@@ -39,3 +40,11 @@ jobs:
 
       - name: terraform plan
         run: terraform plan
+
+  manual-approval:
+    name: manual approval
+    needs: terraform-init-plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: awaiting manual approval
+        run: echo "Waiting for manual approval before applying changes...":
