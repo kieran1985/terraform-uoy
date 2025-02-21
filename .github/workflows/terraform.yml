@@ -41,8 +41,14 @@ jobs:
       - name: terraform plan
         run: terraform plan -out=tfplan
 
-      - name: Upload Terraform Plan to S3
-        run: aws s3 cp tfplan s3://${{secrets.TERRAFORM_STATE_BUCKET}}/tfplan
+      - name: upload plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: tfplan
+
+      # - name: Upload Terraform Plan to S3
+      #   run: aws s3 cp tfplan s3://${{secrets.TERRAFORM_STATE_BUCKET}}/tfplan
 
   manual-approval:
     name: manual approval
@@ -82,8 +88,13 @@ jobs:
       - name: terraform init
         run: terraform init
 
-      - name: download terraform plan from S3
-        run: aws s3 cp s3://${{secrets.TERRAFORM_STATE_BUCKET}}/tfplan tfplan
+      - name: download plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+
+      # - name: download terraform plan from S3
+      #   run: aws s3 cp s3://${{secrets.TERRAFORM_STATE_BUCKET}}/tfplan tfplan
 
       - name: terraform apply
         run: terraform apply tfplan
