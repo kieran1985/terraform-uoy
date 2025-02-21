@@ -1,0 +1,94 @@
+name: terraform
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform-init-plan:
+    name: terraform install, init, plan
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_NUMBER}}:role/github-actions-terraform-uoy
+          role-session-name: GitHubActions
+          aws-region: us-east-1
+
+      - name: verify authentication
+        run: aws sts get-caller-identity
+
+      - name: terraform install
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: terraform init
+        run: terraform init
+
+      - name: terraform validate
+        run: terraform validate
+
+      - name: terraform plan
+        run: terraform plan -out=tfplan
+
+      - name: upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+  manual-approval:
+    name: Manual Approval Before Apply
+    runs-on: ubuntu-latest
+    needs: terraform-init-plan
+    environment: apply-approval # Requires approval in GitHub Environments
+    steps:
+      - name: Approval Required
+        run: echo "Waiting for manual approval in GitHub Environments"
+
+  terraform-apply:
+    name: terraform install, init, plan and apply
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACCOUNT_NUMBER}}:role/github-actions-terraform-uoy
+          role-session-name: GitHubActions
+          aws-region: us-east-1
+
+      - name: verify authentication
+        run: aws sts get-caller-identity
+
+      - name: terraform install
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: terraform init
+        run: terraform init
+
+      - name: download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: terraform apply
+        run: terraform apply tfplan
