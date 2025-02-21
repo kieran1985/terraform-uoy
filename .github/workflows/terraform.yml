@@ -59,6 +59,7 @@ jobs:
   terraform-apply:
     name: terraform install, init, plan and apply
     runs-on: ubuntu-latest
+    needs: manual-approval
     permissions:
       id-token: write
       contents: read
