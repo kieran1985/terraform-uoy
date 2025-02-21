@@ -1,0 +1,34 @@
+name: terraform
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: terraform install, init, plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::868221999357:role/github-actions-terraform-uoy
+          aws-region: us-east-1
+
+      - name: terraform install
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: terraform init
+        run: terraform init
+
+      - name: terraform validate
+        run: terraform validate
+
+      - name: terraform plan
+        run: terraform plan
