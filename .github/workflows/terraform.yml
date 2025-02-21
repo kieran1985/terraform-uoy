@@ -6,7 +6,7 @@ on:
 
 jobs:
   terraform:
-    name: terraform install, init, plan
+    name: terraform install, init
     runs-on: ubuntu-latest
 
     steps:
