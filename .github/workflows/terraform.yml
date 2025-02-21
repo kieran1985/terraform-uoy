@@ -6,7 +6,7 @@ on:
 
 jobs:
   terraform:
-    name: terraform install, init
+    name: terraform install, init, plan
     runs-on: ubuntu-latest
     permissions:
       id-token: write
