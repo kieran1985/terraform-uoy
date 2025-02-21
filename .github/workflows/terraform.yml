@@ -74,10 +74,13 @@ jobs:
       - name: verify authentication
         run: aws sts get-caller-identity
 
-      - name: setup terraform
+      - name: terraform install
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
+
+      - name: terraform init
+        run: terraform init
 
       - name: download terraform plan from S3
         run: aws s3 cp s3://${{secrets.TERRAFORM_STATE_BUCKET}}/tfplan tfplan
