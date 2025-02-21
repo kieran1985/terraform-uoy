@@ -17,7 +17,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::868221999357:role/github-actions-terraform-uoy
+          role-session-name: GitHubActions
           aws-region: us-east-1
+
+      - name: Verify Authentication
+        run: aws sts get-caller-identity
 
       - name: terraform install
         uses: hashicorp/setup-terraform@v3
